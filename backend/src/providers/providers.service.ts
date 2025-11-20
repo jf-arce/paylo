@@ -13,44 +13,44 @@ export class ProvidersService {
   ) {}
 
   async create(createProviderDto: CreateProviderDto): Promise<Provider> {
-    const provider = this.providerRepository.create(createProviderDto);
-    return this.providerRepository.save(provider);
+    const newProvider = this.providerRepository.create(createProviderDto);
+    return this.providerRepository.save(newProvider);
   }
 
   async findAll(): Promise<Provider[]> {
-    const providers = await this.providerRepository.find();
-
-    if (providers.length === 0) {
-      throw new NotFoundException('No providers found');
-    }
-
-    return providers;
+    return this.providerRepository.find();
   }
 
   async findOne(id: string): Promise<Provider> {
-    const provider = await this.providerRepository.findOne({
+    const providerFound = await this.providerRepository.findOne({
       where: { id },
     });
 
-    if (!provider) {
-      throw new Error(`Provider with ID ${id} not found`);
+    if (!providerFound) {
+      throw new NotFoundException(`Provider with ID ${id} not found`);
     }
 
-    return provider;
+    return providerFound;
   }
 
   async update(
     id: string,
     updateProviderDto: UpdateProviderDto,
   ): Promise<Provider> {
-    await this.providerRepository.update(id, updateProviderDto);
-    return await this.findOne(id);
+    const providerFound = await this.findOne(id);
+
+    if (!providerFound) {
+      throw new NotFoundException(`Provider with ID ${id} not found`);
+    }
+
+    const providerUpdated = Object.assign(providerFound, updateProviderDto);
+    return this.providerRepository.save(providerUpdated);
   }
 
   async remove(id: string): Promise<void> {
     const result = await this.providerRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new Error(`Provider with ID ${id} not found`);
+      throw new NotFoundException(`Provider with ID ${id} not found`);
     }
   }
 }
