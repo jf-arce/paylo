@@ -30,5 +30,5 @@ export class Plan extends CustomBaseEntity {
   service: Service;
 
   @OneToMany(() => PlanPrice, (planPrice) => planPrice.plan)
-  prices: PlanPrice[] = [];
+  prices: PlanPrice[];
 }
