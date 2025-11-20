@@ -7,6 +7,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity({ name: 'services' })
@@ -20,11 +21,15 @@ export class Service extends CustomBaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ name: 'provider_id' })
+  providerId: string;
+
   @ManyToOne(() => Provider, (provider) => provider.services, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'provider_id' })
   provider: Provider;
 
   @OneToMany(() => Plan, (plan) => plan.service)
-  plans: Plan[];
+  plans: Plan[] = [];
 }

@@ -18,12 +18,15 @@ export class ServicesService {
   }
 
   async findAll(): Promise<Service[]> {
-    return this.serviceRepository.find();
+    return this.serviceRepository.find({
+      relations: ['provider', 'plans'],
+    });
   }
 
   async findOne(id: string): Promise<Service> {
     const serviceFound = await this.serviceRepository.findOne({
       where: { id },
+      relations: ['provider', 'plans'],
     });
 
     if (!serviceFound) {
@@ -38,10 +41,6 @@ export class ServicesService {
     updateServiceDto: UpdateServiceDto,
   ): Promise<Service> {
     const serviceFound = await this.findOne(id);
-
-    if (!serviceFound) {
-      throw new NotFoundException(`Service with ID ${id} not found`);
-    }
 
     const serviceUpdated = Object.assign(serviceFound, updateServiceDto);
     return this.serviceRepository.save(serviceUpdated);
