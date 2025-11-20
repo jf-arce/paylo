@@ -1,26 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePlanPriceDto } from './dto/create-plan-price.dto';
 import { UpdatePlanPriceDto } from './dto/update-plan-price.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PlanPrice } from './entities/plan-price.entity';
+import { Repository } from 'typeorm';
+import { PlansService } from '@/plans/plans.service';
 
 @Injectable()
 export class PlanPricesService {
-  create(createPlanPriceDto: CreatePlanPriceDto) {
-    return 'This action adds a new planPrice';
+  constructor(
+    @InjectRepository(PlanPrice)
+    private readonly planPriceRepository: Repository<PlanPrice>,
+    private readonly plansService: PlansService,
+  ) {}
+
+  async create(createPlanPriceDto: CreatePlanPriceDto): Promise<PlanPrice> {
+    const { planId, ...planPriceData } = createPlanPriceDto;
+
+    await this.plansService.findOne(planId);
+
+    const newPlanPrice = this.planPriceRepository.create({
+      price: planPriceData.price,
+      interval: planPriceData.interval,
+      planId: planId,
+    });
+
+    return this.planPriceRepository.save(newPlanPrice);
   }
 
-  findAll() {
-    return `This action returns all planPrices`;
+  async findAll(): Promise<PlanPrice[]> {
+    return this.planPriceRepository.find({
+      relations: ['plan'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} planPrice`;
+  async findOne(id: string): Promise<PlanPrice> {
+    const planPriceFound = await this.planPriceRepository.findOne({
+      where: { id },
+      relations: ['plan'],
+    });
+
+    if (!planPriceFound) {
+      throw new NotFoundException(`Plan Price with ID ${id} not found`);
+    }
+
+    return planPriceFound;
   }
 
-  update(id: number, updatePlanPriceDto: UpdatePlanPriceDto) {
-    return `This action updates a #${id} planPrice`;
+  async update(
+    id: string,
+    updatePlanPriceDto: UpdatePlanPriceDto,
+  ): Promise<PlanPrice> {
+    const planPriceFound = await this.findOne(id);
+
+    await this.plansService.findOne(planPriceFound.planId);
+
+    const planPriceUpdated = Object.assign(planPriceFound, updatePlanPriceDto);
+    return this.planPriceRepository.save(planPriceUpdated);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} planPrice`;
+  async remove(id: string): Promise<void> {
+    const result = await this.planPriceRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Plan Price with ID ${id} not found`);
+    }
   }
 }
