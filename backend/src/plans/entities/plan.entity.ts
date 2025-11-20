@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -21,9 +22,13 @@ export class Plan extends CustomBaseEntity {
   })
   name: string;
 
+  @Column({ name: 'service_id' })
+  serviceId: string;
+
   @ManyToOne(() => Service, (service) => service.plans, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'service_id' })
   service: Service;
 
   @OneToMany(() => PlanPrice, (planPrice) => planPrice.plan)
-  prices: PlanPrice[];
+  prices: PlanPrice[] = [];
 }
