@@ -1,4 +1,5 @@
 import { Provider } from '@/providers/entities/provider.entity';
+import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 import {
   Column,
   Entity,
@@ -8,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'payment_methods' })
-export class PaymentMethod {
+export class PaymentMethod extends CustomBaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
