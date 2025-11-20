@@ -18,39 +18,39 @@ export class ServicesService {
   }
 
   async findAll(): Promise<Service[]> {
-    const services = await this.serviceRepository.find();
-
-    if (services.length === 0) {
-      throw new NotFoundException('No services found');
-    }
-
-    return services;
+    return this.serviceRepository.find();
   }
 
-  async findOne(id: number): Promise<Service> {
-    const service = await this.serviceRepository.findOne({
+  async findOne(id: string): Promise<Service> {
+    const serviceFound = await this.serviceRepository.findOne({
       where: { id },
     });
 
-    if (!service) {
-      throw new Error(`Service with ID ${id} not found`);
+    if (!serviceFound) {
+      throw new NotFoundException(`Service with ID ${id} not found`);
     }
 
-    return service;
+    return serviceFound;
   }
 
   async update(
-    id: number,
+    id: string,
     updateServiceDto: UpdateServiceDto,
   ): Promise<Service> {
-    await this.serviceRepository.update(id, updateServiceDto);
-    return await this.findOne(id);
+    const serviceFound = await this.findOne(id);
+
+    if (!serviceFound) {
+      throw new NotFoundException(`Service with ID ${id} not found`);
+    }
+
+    const serviceUpdated = Object.assign(serviceFound, updateServiceDto);
+    return this.serviceRepository.save(serviceUpdated);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.serviceRepository.delete(id);
     if (result.affected === 0) {
-      throw new Error(`Service with ID ${id} not found`);
+      throw new NotFoundException(`Service with ID ${id} not found`);
     }
   }
 }
