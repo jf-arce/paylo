@@ -39,10 +39,6 @@ export class ProvidersService {
   ): Promise<Provider> {
     const providerFound = await this.findOne(id);
 
-    if (!providerFound) {
-      throw new NotFoundException(`Provider with ID ${id} not found`);
-    }
-
     const providerUpdated = Object.assign(providerFound, updateProviderDto);
     return this.providerRepository.save(providerUpdated);
   }
