@@ -27,7 +27,7 @@ export class Provider extends CustomBaseEntity {
   @Column({ type: 'varchar', length: 16, nullable: true })
   phone: string | null;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true, name: 'deleted_at' })
   deletedAt: string | null;
 
   @OneToMany(() => Service, (service) => service.provider)

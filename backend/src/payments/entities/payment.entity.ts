@@ -1,6 +1,12 @@
 import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 import { Subscription } from '@/subscriptions/entities/subscription.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum PaymentStatusEnum {
   PENDING = 'pending',
@@ -29,11 +35,15 @@ export class Payment extends CustomBaseEntity {
   })
   status: PaymentStatusEnum;
 
-  @Column()
+  @Column({ name: 'transaction_id' })
   transactionId: string;
+
+  @Column({ name: 'subscription_id' })
+  subscriptionId: string;
 
   @ManyToOne(() => Subscription, (subscription) => subscription.payments, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'subscription_id' })
   subscription: Subscription;
 }

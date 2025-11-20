@@ -4,6 +4,7 @@ import { Subscription } from '@/subscriptions/entities/subscription.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -29,7 +30,11 @@ export class PlanPrice extends CustomBaseEntity {
   })
   interval: PlanPriceIntervalEnum;
 
+  @Column({ name: 'plan_id' })
+  planId: string;
+
   @ManyToOne(() => Plan, (plan) => plan.prices, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'plan_id' })
   plan: Plan;
 
   @OneToMany(() => Subscription, (subscription) => subscription.planPrice)

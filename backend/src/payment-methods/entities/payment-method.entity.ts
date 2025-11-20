@@ -1,5 +1,11 @@
 import { Provider } from '@/providers/entities/provider.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'payment_methods' })
 export class PaymentMethod {
@@ -15,11 +21,15 @@ export class PaymentMethod {
   @Column({ default: true })
   active: boolean;
 
-  @Column()
+  @Column({ name: 'account_id' })
   accountId: string;
+
+  @Column({ name: 'provider_id' })
+  providerId: string;
 
   @ManyToOne(() => Provider, (provider) => provider.paymentMethods, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'provider_id' })
   provider: Provider;
 }
