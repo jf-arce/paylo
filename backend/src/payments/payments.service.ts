@@ -64,6 +64,14 @@ export class PaymentsService {
       await this.subscriptionService.findOne(updatePaymentDto.subscriptionId);
     }
 
+    if (
+      updatePaymentDto.method &&
+      updatePaymentDto.method !== paymentFound.method
+    ) {
+      const method = updatePaymentDto.method;
+      await this.paymentMethodTypeService.findOneByName(method);
+    }
+
     const paymentUpdated = Object.assign(paymentFound, updatePaymentDto);
     return this.paymentRepository.save(paymentUpdated);
   }

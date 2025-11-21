@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsEnum, IsString, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsEnum, Min, IsUUID } from 'class-validator';
 import { PlanPriceIntervalEnum } from '../entities/plan-price.entity';
 
 export class CreatePlanPriceDto {
@@ -11,7 +11,7 @@ export class CreatePlanPriceDto {
   @IsNotEmpty()
   interval: PlanPriceIntervalEnum;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   planId: string;
 }

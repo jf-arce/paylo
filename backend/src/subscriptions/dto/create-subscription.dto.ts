@@ -1,14 +1,12 @@
 import {
   IsDateString,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
 } from 'class-validator';
-import { SubscriptionStatusEnum } from '../entities/subscription.entity';
 
 export class CreateSubscriptionDto {
   @IsString()
@@ -20,10 +18,6 @@ export class CreateSubscriptionDto {
   @IsNotEmpty()
   @MaxLength(255)
   customerEmail: string;
-
-  @IsEnum(SubscriptionStatusEnum)
-  @IsOptional()
-  status?: SubscriptionStatusEnum;
 
   @IsDateString()
   @IsOptional()

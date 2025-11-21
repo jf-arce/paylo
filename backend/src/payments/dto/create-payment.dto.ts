@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
 import { PaymentStatusEnum } from '../entities/payment.entity';
@@ -26,6 +27,7 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   transactionId: string;
 
+  @IsUUID()
   @IsNotEmpty()
   subscriptionId: string;
 }

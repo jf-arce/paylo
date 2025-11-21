@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateServiceDto {
   @IsString()
@@ -10,7 +10,7 @@ export class CreateServiceDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   providerId: string;
 }
