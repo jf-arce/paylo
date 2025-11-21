@@ -1,10 +1,16 @@
 import { PaymentMethod } from '@/payment-methods/entities/payment-method.entity';
 import { Service } from '@/services/entities/service.entity';
-import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'providers' })
-export class Provider extends CustomBaseEntity {
+export class Provider {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -28,7 +34,13 @@ export class Provider extends CustomBaseEntity {
   phone: string | null;
 
   @Column({ type: 'text', nullable: true, name: 'deleted_at' })
-  deletedAt: string | null;
+  deletedAt: Date | null;
+
+  @CreateDateColumn({ name: 'created_at', type: 'text' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'text' })
+  updatedAt: Date;
 
   @OneToMany(() => Service, (service) => service.provider)
   services: Service[];

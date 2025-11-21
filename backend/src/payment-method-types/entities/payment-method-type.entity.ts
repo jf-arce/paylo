@@ -1,8 +1,13 @@
-import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'payment_method_types' })
-export class PaymentMethodType extends CustomBaseEntity {
+export class PaymentMethodType {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,4 +17,10 @@ export class PaymentMethodType extends CustomBaseEntity {
     length: 100,
   })
   name: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'text' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'text' })
+  updatedAt: Date;
 }

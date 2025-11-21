@@ -1,15 +1,16 @@
 import { Provider } from '@/providers/entities/provider.entity';
-import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'payment_methods' })
-export class PaymentMethod extends CustomBaseEntity {
+export class PaymentMethod {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,6 +28,12 @@ export class PaymentMethod extends CustomBaseEntity {
 
   @Column({ name: 'provider_id' })
   providerId: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'text' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'text' })
+  updatedAt: Date;
 
   @ManyToOne(() => Provider, (provider) => provider.paymentMethods, {
     onDelete: 'CASCADE',

@@ -1,13 +1,14 @@
 import { Payment } from '@/payments/entities/payment.entity';
 import { PlanPrice } from '@/plan-prices/entities/plan-price.entity';
-import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum SubscriptionStatusEnum {
@@ -17,7 +18,7 @@ export enum SubscriptionStatusEnum {
 }
 
 @Entity({ name: 'subscriptions' })
-export class Subscription extends CustomBaseEntity {
+export class Subscription {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -53,6 +54,12 @@ export class Subscription extends CustomBaseEntity {
 
   @Column({ name: 'plan_price_id' })
   planPriceId: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'text' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'text' })
+  updatedAt: Date;
 
   @ManyToOne(() => PlanPrice, (planPrice) => planPrice.subscriptions, {
     onDelete: 'CASCADE',

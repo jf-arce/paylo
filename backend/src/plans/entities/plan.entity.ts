@@ -1,17 +1,18 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Service } from '@/services/entities/service.entity';
 import { PlanPrice } from '@/plan-prices/entities/plan-price.entity';
-import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 
 @Entity({ name: 'plans' })
-export class Plan extends CustomBaseEntity {
+export class Plan {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,6 +25,12 @@ export class Plan extends CustomBaseEntity {
 
   @Column({ name: 'service_id' })
   serviceId: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'text' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'text' })
+  updatedAt: Date;
 
   @ManyToOne(() => Service, (service) => service.plans, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'service_id' })
