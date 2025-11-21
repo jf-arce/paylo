@@ -1,26 +1,107 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePaymentMethodTypeDto } from './dto/create-payment-method-type.dto';
 import { UpdatePaymentMethodTypeDto } from './dto/update-payment-method-type.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PaymentMethodType } from './entities/payment-method-type.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PaymentMethodTypesService {
-  create(createPaymentMethodTypeDto: CreatePaymentMethodTypeDto) {
-    return 'This action adds a new paymentMethodType';
+  constructor(
+    @InjectRepository(PaymentMethodType)
+    private readonly paymentMethodTypeRepository: Repository<PaymentMethodType>,
+  ) {}
+
+  async create(
+    createPaymentMethodTypeDto: CreatePaymentMethodTypeDto,
+  ): Promise<PaymentMethodType> {
+    const name = createPaymentMethodTypeDto.name;
+
+    await this.ensureNameIsUnique(name);
+
+    const paymentMethodType = this.paymentMethodTypeRepository.create({
+      name,
+    });
+
+    return this.paymentMethodTypeRepository.save(paymentMethodType);
   }
 
-  findAll() {
-    return `This action returns all paymentMethodTypes`;
+  async findAll(): Promise<PaymentMethodType[]> {
+    return this.paymentMethodTypeRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} paymentMethodType`;
+  async findOne(id: number): Promise<PaymentMethodType> {
+    const paymentMethodType = await this.paymentMethodTypeRepository.findOne({
+      where: { id },
+    });
+
+    if (!paymentMethodType) {
+      throw new NotFoundException(
+        `Payment method type with ID ${id} not found`,
+      );
+    }
+
+    return paymentMethodType;
   }
 
-  update(id: number, updatePaymentMethodTypeDto: UpdatePaymentMethodTypeDto) {
-    return `This action updates a #${id} paymentMethodType`;
+  async findOneByName(name: string): Promise<PaymentMethodType> {
+    const paymentMethodType = await this.paymentMethodTypeRepository.findOne({
+      where: { name },
+    });
+
+    if (!paymentMethodType) {
+      throw new NotFoundException(
+        `Payment method type with name ${name} not found`,
+      );
+    }
+
+    return paymentMethodType;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} paymentMethodType`;
+  async update(
+    id: number,
+    updatePaymentMethodTypeDto: UpdatePaymentMethodTypeDto,
+  ): Promise<PaymentMethodType> {
+    const paymentMethodType = await this.findOne(id);
+
+    if (
+      updatePaymentMethodTypeDto.name &&
+      updatePaymentMethodTypeDto.name !== paymentMethodType.name
+    ) {
+      const name = updatePaymentMethodTypeDto.name;
+      await this.ensureNameIsUnique(name);
+    }
+
+    const updatedPaymentMethodType = Object.assign(
+      paymentMethodType,
+      updatePaymentMethodTypeDto,
+    );
+
+    return this.paymentMethodTypeRepository.save(updatedPaymentMethodType);
+  }
+
+  async remove(id: number): Promise<void> {
+    const result = await this.paymentMethodTypeRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Payment method type with ID ${id} not found`,
+      );
+    }
+  }
+
+  private async ensureNameIsUnique(name: string): Promise<void> {
+    const paymentMethodType = await this.paymentMethodTypeRepository.findOne({
+      where: { name },
+    });
+
+    if (paymentMethodType) {
+      throw new ConflictException(
+        `Payment method type with name ${name} already exists`,
+      );
+    }
   }
 }

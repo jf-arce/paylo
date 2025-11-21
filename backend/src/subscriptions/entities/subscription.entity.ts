@@ -4,6 +4,7 @@ import { CustomBaseEntity } from '@/shared/entities/custom-base.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -50,11 +51,15 @@ export class Subscription extends CustomBaseEntity {
   })
   endDate: string;
 
+  @Column({ name: 'plan_price_id' })
+  planPriceId: string;
+
   @ManyToOne(() => PlanPrice, (planPrice) => planPrice.subscriptions, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'plan_price_id' })
   planPrice: PlanPrice;
 
   @OneToMany(() => Payment, (payment) => payment.subscription)
-  payments: Payment[];
+  payments?: Payment[];
 }
